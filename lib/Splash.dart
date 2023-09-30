@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:proyecto003/LoginForm.dart';
-import 'main.dart';
+import 'package:proyecto002/LoginForm.dart';
+
 
 
 class MyHomePageSplash extends StatefulWidget {
