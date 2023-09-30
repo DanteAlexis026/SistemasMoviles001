@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'Salon.dart';
 import 'Cursos.dart';
 import 'main.dart';
+
+//probando commit
 class MenuLateral extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
