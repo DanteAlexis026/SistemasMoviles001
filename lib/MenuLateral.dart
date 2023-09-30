@@ -3,7 +3,108 @@ import 'Salon.dart';
 import 'Cursos.dart';
 import 'main.dart';
 
-//probando commit
+class MLateral extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      drawer: MenuLateral(),
+      appBar: AppBar(
+        title: Text("FisInfo"),
+      ),
+      body: ListView(
+        padding: EdgeInsets.all(16.0),
+        children: <Widget>[
+          // Botón 1 y descripción en una Card
+          Container(
+            width: 320,
+            height: 320,
+            color: Colors.white,
+            child: Image.asset('assets/FisInfo.jpg'),
+          ),
+
+          SizedBox(height: 20), // Espacio en blanco
+
+          Card(
+            elevation: 4.0,
+            child: InkWell(
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (BuildContext context) => Cursos(),
+                  ),
+                );
+              },
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text(
+                      "Cursos",
+                      style: TextStyle(
+                        fontSize: 24,
+                        decoration: TextDecoration.underline,
+                        color: Colors.blue,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text(
+                      "Aquí encontrarás los cursos y sus pre-requisitos respectivamente.",
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          SizedBox(height: 20), // Espacio en blanco
+
+          // Botón 2 y descripción en una Card
+          Card(
+            elevation: 4.0,
+            child: InkWell(
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (BuildContext context) => Salon(),
+                  ),
+                );
+              },
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text(
+                      "Salon",
+                      style: TextStyle(
+                        fontSize: 24,
+                        decoration: TextDecoration.underline,
+                        color: Colors.blue,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text(
+                      "Aquí encontrarás el aula según el curso que lleves.",
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+
 class MenuLateral extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -24,6 +125,17 @@ class MenuLateral extends StatelessWidget {
           ),
 
           // Elementos de menú
+          new ListTile(
+            title: Text("INICIO"),
+            onTap: () {
+              Navigator.of(context).pop();
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (BuildContext context) => MLateral(),
+                ),
+              );
+            },
+          ),
           new ListTile(
             title: Text("CURSOS"),
             onTap: () {
