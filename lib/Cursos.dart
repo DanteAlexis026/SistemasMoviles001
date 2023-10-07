@@ -1,80 +1,74 @@
 import 'package:flutter/material.dart';
-import 'MenuLateral.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
+import 'CursoCiclo.dart';
 
 class Curso {
   final String nombre;
-  final String descripcion; // Agregamos una descripción
-  Curso(this.nombre, this.descripcion);
+  final String descripcion;
+  final int id_curso;
+
+  Curso({required this.nombre, required this.descripcion, required this.id_curso});
+
+  factory Curso.fromJson(Map<String, dynamic> json) {
+    return Curso(
+      nombre: json['nombre'],
+      descripcion: json['descripcion'],
+      id_curso: json['id'],
+
+    );
+  }
 }
 
-class Ciclo {
-  final String nombre;
-  final List<Curso> cursos;
-  Ciclo(this.nombre, this.cursos);
+class CursoListScreen extends StatefulWidget {
+  @override
+  _CursoListScreenState createState() => _CursoListScreenState();
 }
 
-class Cursos extends StatelessWidget {
-  final List<Ciclo> ListaDeCursos = [
-    Ciclo("Primer Ciclo", [
-      Curso("Cálculo I", "-"),
-      Curso("Álgebra y geometría analítica", "-"),
-      Curso("Biología", "-"),
-      Curso("Redaccion y técnicas de comunicacion afectiva I", "-"),
-      Curso("Programación y Computación", "-"),
-      Curso("Medio Ambiente y Desarrollo Sostenible", "-"),
-      Curso("Métodos de Estudio Universitario", "-"),
-      // Agrega descripciones para otros cursos aquí
-    ]),
+class _CursoListScreenState extends State<CursoListScreen> {
+  List<Curso> cursos = [];
 
-    Ciclo("Segundo Ciclo", [
-      Curso("Redaccion y técnicas de comunicacion afectiva II", "Redaccion y técnicas de comunicacion afectiva I"),
-      Curso("Investigación informativa", "-"),
-      Curso("Realidad nacional y mundial", "-"),
-      Curso("Calculo II", "Cálculo I"),
-      Curso("Física I", "-"),
-      Curso("Química General", "-"),
-      Curso("Introducción a las ciencias e ingeniería", "-"),
-      Curso("Emprendimiento", "-"),
-    ]),
-    // Agrega más ciclos y cursos aquí
-  ];
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
+  }
+
+  Future<void> fetchData() async {
+    final response = await http.get(
+      Uri.parse('https://servidorwebcito.000webhostapp.com/cursos.php'),
+    );
+
+    if (response.statusCode == 200) {
+      final jsonData = json.decode(response.body);
+
+      setState(() {
+        cursos = jsonData.map<Curso>((item) => Curso.fromJson(item)).toList();
+      });
+    } else {
+      throw Exception('Error al cargar los cursos');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: MenuLateral(),
       appBar: AppBar(
-        title: Text("CURSOS POR CICLO"),
+        title: Text('Lista de Cursos'),
       ),
       body: ListView.builder(
-        itemCount: ListaDeCursos.length,
+        itemCount: cursos.length,
         itemBuilder: (context, index) {
-          final ciclo = ListaDeCursos[index];
-          return Card(
-            margin: EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text(
-                    ciclo.nombre,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+          return ListTile(
+            title: Text(cursos[index].nombre),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => CursoCiclo(id_curso: cursos[index].id_curso),
                 ),
-                Divider(),
-                Column(
-                  children: ciclo.cursos.map((curso) {
-                    return ListTile(
-                      title: Text(curso.nombre),
-                      trailing: Text(curso.descripcion), // Muestra la descripción en la parte derecha
-                    );
-                  }).toList(),
-                ),
-              ],
-            ),
+              );
+            },
           );
         },
       ),

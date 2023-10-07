@@ -30,7 +30,7 @@ class MLateral extends StatelessWidget {
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (BuildContext context) => Cursos(),
+                    builder: (BuildContext context) => CursoListScreen(),
                   ),
                 );
               },
@@ -142,7 +142,7 @@ class MenuLateral extends StatelessWidget {
               Navigator.of(context).pop();
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (BuildContext context) => Cursos(),
+                  builder: (BuildContext context) => CursoListScreen(),
                 ),
               );
             },
