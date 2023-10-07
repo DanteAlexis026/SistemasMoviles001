@@ -13,9 +13,11 @@ class CursoCiclo extends StatefulWidget {
 
 class _CursoCicloState extends State<CursoCiclo> {
   late String nombre = ''; // Valor predeterminado inicial
+  late String codigo_curso = ''; // Valor predeterminado inicial
   late String descripcion = ''; // Valor predeterminado inicial
   late String prerrequisito = ''; // Valor predeterminado inicial
   late String profesores = ''; // Valor predeterminado inicial
+
 
   @override
   void initState() {
@@ -33,6 +35,7 @@ class _CursoCicloState extends State<CursoCiclo> {
 
       setState(() {
         nombre = jsonData[0]['nombre'];
+        codigo_curso = jsonData[0]['codigo_curso'];
         descripcion = jsonData[0]['descripcion'];
         prerrequisito = jsonData[0]['prerrequisito'];
         profesores = jsonData[0]['profesores'];
@@ -84,6 +87,33 @@ class _CursoCicloState extends State<CursoCiclo> {
                 ],
               ),
             ),
+
+            RichText(
+              text: TextSpan(
+                style: TextStyle(
+                  fontSize: 16.0,
+                  color: Colors.black,
+                ),
+                children: [
+                  TextSpan(
+                    text: "Codigo: ",
+                    style: TextStyle(
+                      fontSize: 17.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  TextSpan(
+                    text: codigo_curso,
+                    style: TextStyle(
+                      fontSize: 15.0,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+
+
             RichText(
               text: TextSpan(
                 style: TextStyle(
@@ -159,3 +189,4 @@ class _CursoCicloState extends State<CursoCiclo> {
     );
   }
 }
+

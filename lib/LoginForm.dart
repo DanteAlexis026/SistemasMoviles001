@@ -112,12 +112,12 @@ class _LoginFormState extends State<LoginForm> {
 class DemoData {
   static final List<Map<String, String>> authorizedUsers = [
     {
-      'usuario': 'usuario1',
-      'contraseña': 'contraseña1',
+      'usuario': 'dante.idrogo@unmsm.edu.pe',
+      'contraseña': 'contraseña',
     },
     {
-      'usuario': 'usuario2',
-      'contraseña': 'contraseña2',
+      'usuario': 'dajanna.moran@unmsm.edu.pe',
+      'contraseña': 'contraseña',
     },
     // Agrega más usuarios autorizados según sea necesario
   ];
