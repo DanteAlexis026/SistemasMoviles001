@@ -6,17 +6,14 @@ import 'CursoCiclo.dart';
 
 class Curso {
   final String nombre;
-  final String descripcion;
   final int id_curso;
 
-  Curso({required this.nombre, required this.descripcion, required this.id_curso});
+  Curso({required this.nombre, required this.id_curso});
 
   factory Curso.fromJson(Map<String, dynamic> json) {
     return Curso(
       nombre: json['nombre'],
-      descripcion: json['descripcion'],
       id_curso: json['id'],
-
     );
   }
 }
@@ -51,26 +48,55 @@ class _CursoListScreenState extends State<CursoListScreen> {
     }
   }
 
+  List<Curso> getCursosPrimerCiclo() {
+    return cursos.where((curso) => curso.id_curso >= 1 && curso.id_curso <= 7).toList();
+  }
+
+  List<Curso> getCursosSegundoCiclo() {
+    return cursos.where((curso) => curso.id_curso >= 8 && curso.id_curso <= 15).toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Lista de Cursos'),
       ),
-      body: ListView.builder(
-        itemCount: cursos.length,
-        itemBuilder: (context, index) {
-          return ListTile(
-            title: Text(cursos[index].nombre),
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => CursoCiclo(id_curso: cursos[index].id_curso),
-                ),
+      body: ListView(
+        children: [
+          ExpansionTile(
+            title: Text('Primer Ciclo'),
+            children: getCursosPrimerCiclo().map((curso) {
+              return ListTile(
+                title: Text(curso.nombre),
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          CursoCiclo(id_curso: curso.id_curso),
+                    ),
+                  );
+                },
               );
-            },
-          );
-        },
+            }).toList(),
+          ),
+          ExpansionTile(
+            title: Text('Segundo Ciclo'),
+            children: getCursosSegundoCiclo().map((curso) {
+              return ListTile(
+                title: Text(curso.nombre),
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          CursoCiclo(id_curso: curso.id_curso),
+                    ),
+                  );
+                },
+              );
+            }).toList(),
+          ),
+        ],
       ),
     );
   }
