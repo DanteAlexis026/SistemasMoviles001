@@ -36,9 +36,11 @@ class _LoginFormState extends State<LoginForm> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              Image.network(
-                'https://industrial.unmsm.edu.pe/wp-content/uploads/2020/11/icono.png',
-                height: 150.0,
+              Container(
+                width: 170,
+                height: 170,
+                color: Colors.white,
+                child:  Image.asset('assets/simbolo.png'),
               ),
               SizedBox(height: 20.0),
               TextFormField(
