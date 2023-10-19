@@ -1,73 +1,104 @@
 import 'package:flutter/material.dart';
-import 'MenuLateral.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'SalonCiclo.dart';
 
-class Curso{
-  final String curso;
-  final String aula;
-  Curso(this.curso, this.aula);
-}
-class Ciclo {
+class Curso {
   final String nombre;
-  final List<Curso> cursos;
-  Ciclo(this.nombre, this.cursos);
-}
-class Salon extends StatelessWidget{
+  final int id_curso;
 
-  final List<Ciclo> listaDeCiclo = [
-    Ciclo("Primer Ciclo", [
-      Curso("Cálculo I", "Aula 103-NP"),
-      Curso("Algebra y geometría analítica", "Aula 105"),
-      Curso("Biología", "Aula 205"),
-      Curso("Redaccion y técnicas de comunicacion afectiva I", "Aula 208-NP"),
-      Curso("Programación y Computación", "Aula 308"),
-      Curso("Medio Ambiente y Desarrollo Sostenible", "Aula 108-NP"),
-      Curso("Métodos de Estudio Universitario", "Aula 109"),
-    ]),
-    Ciclo("Segundo Ciclo", [
-      Curso("Algebra y geometría analítica", "Aula 206-NP"),
-      Curso("Redaccion y técnicas de comunicacion afectiva II", "Aula 207"),
-      Curso("Investigación informativa", "Aula 208-NP"),
-      Curso("Realidad nacional y mundial", "Aula 205"),
-      Curso("Calculo II", "Aula 201-NP"),
-      Curso("Física I", "Aula 101"),
-      Curso("Química General", "Aula 105-NP"),
-      Curso("Introducción a las ciencias e ingeniería", "Aula 108"),
-      Curso("Emprendimiento", "Aula 101-NP"),
-    ]),
-    Ciclo("Tercer Ciclo", [
-      Curso("Programación y fundamentos de algorítmica", "Aula 108-NP"),
-      Curso("Teoría general de sistemas", "Aula 110"),
-      Curso("Organización y administración", "Aula 108"),
-      Curso("Ingeniería económica", "Aula 306-NP"),
-      Curso("Estadística", "Aula 105"),
-      Curso("Series y ecuaciones diferenciales", "Aula 203-NP"),
-      Curso("Matemáticas discretas", "Aula 107"),
-    ]),
-  ];
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      drawer: MenuLateral(),
-      appBar: AppBar(
-        title: Text("Cursos y Salones"),
-      ),
-      body: ListView.builder(
-        itemCount: listaDeCiclo.length,
-        itemBuilder: (context, index) {
-          final ciclo = listaDeCiclo[index];
-          return ExpansionTile(
-            title: Text(ciclo.nombre),
-            children: ciclo.cursos.map((curso) {
-              return ListTile(
-                title: Text(curso.curso),
-                subtitle: Text(curso.aula),
+  Curso({required this.nombre, required this.id_curso});
 
-              );
-            }).toList(),
-          );
-        },
-      ),
+  factory Curso.fromJson(Map<String, dynamic> json) {
+    return Curso(
+      nombre: json['nombre'],
+      id_curso: json['id'],
     );
   }
 }
 
+class SalonListScreen extends StatefulWidget {
+  @override
+  _SalonListScreenState createState() => _SalonListScreenState();
+}
+
+class _SalonListScreenState extends State<SalonListScreen> {
+  List<Curso> cursos = [];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
+  }
+
+  Future<void> fetchData() async {
+    final response = await http.get(
+      Uri.parse('https://servidorwebcito.000webhostapp.com/cursos.php'),
+    );
+
+    if (response.statusCode == 200) {
+      final jsonData = json.decode(response.body);
+
+      setState(() {
+        cursos = jsonData.map<Curso>((item) => Curso.fromJson(item)).toList();
+      });
+    } else {
+      throw Exception('Error al cargar los cursos');
+    }
+  }
+
+  List<Curso> getCursosPrimerCiclo() {
+    return cursos.where((curso) => curso.id_curso >= 1 && curso.id_curso <= 7).toList();
+  }
+
+  List<Curso> getCursosSegundoCiclo() {
+    return cursos.where((curso) => curso.id_curso >= 8 && curso.id_curso <= 15).toList();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Lista de Cursos'),
+      ),
+      body: ListView(
+        children: [
+          ExpansionTile(
+            title: Text('Primer Ciclo'),
+            children: getCursosPrimerCiclo().map((curso) {
+              return ListTile(
+                title: Text(curso.nombre),
+                onTap: () {
+                  // Navegar a la pantalla de detalle del curso
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SalonCiclo(idCurso: curso.id_curso),
+                    ),
+                  );
+                },
+              );
+            }).toList(),
+          ),
+          ExpansionTile(
+            title: Text('Segundo Ciclo'),
+            children: getCursosSegundoCiclo().map((curso) {
+              return ListTile(
+                title: Text(curso.nombre),
+                onTap: () {
+                  // Navegar a la pantalla de detalle del curso
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SalonCiclo(idCurso: curso.id_curso),
+                    ),
+                  );
+                },
+              );
+            }).toList(),
+          ),
+        ],
+      ),
+    );
+  }
+}

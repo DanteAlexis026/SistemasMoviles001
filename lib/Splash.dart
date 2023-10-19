@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:proyecto002/LoginForm.dart';
 
-
-
 class MyHomePageSplash extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {

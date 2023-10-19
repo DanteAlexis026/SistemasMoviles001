@@ -16,7 +16,7 @@ class _CursoCicloState extends State<CursoCiclo> {
   late String codigo_curso = ''; // Valor predeterminado inicial
   late String descripcion = ''; // Valor predeterminado inicial
   late String prerrequisito = ''; // Valor predeterminado inicial
-  late String profesores = ''; // Valor predeterminado inicial
+
 
 
   @override
@@ -38,7 +38,7 @@ class _CursoCicloState extends State<CursoCiclo> {
         codigo_curso = jsonData[0]['codigo_curso'];
         descripcion = jsonData[0]['descripcion'];
         prerrequisito = jsonData[0]['prerrequisito'];
-        profesores = jsonData[0]['profesores'];
+
       });
     } else {
       throw Exception('Error al cargar el curso');
@@ -97,7 +97,7 @@ class _CursoCicloState extends State<CursoCiclo> {
                 children: [
                   TextSpan(
                     text: "Codigo: ",
-                    style: TextStyle(
+                    style: TextStyle( 
                       fontSize: 17.0,
                       fontWeight: FontWeight.bold,
                     ),
@@ -160,33 +160,9 @@ class _CursoCicloState extends State<CursoCiclo> {
                 ],
               ),
             ),
-            RichText(
-              text: TextSpan(
-                style: TextStyle(
-                  fontSize: 16.0,
-                  color: Colors.black,
-                ),
-                children: [
-                  TextSpan(
-                    text: "Profesores: ",
-                    style: TextStyle(
-                      fontSize: 17.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  TextSpan(
-                    text: profesores,
-                    style: TextStyle(
-                      fontSize: 16.0,
-                    ),
-                  ),
-                ],
-              ),
-            ),
           ],
         ),
       ),
     );
   }
 }
-
