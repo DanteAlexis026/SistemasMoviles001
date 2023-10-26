@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'MenuLateral.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
+
 
 class LoginForm extends StatefulWidget {
   @override
@@ -12,15 +16,24 @@ class _LoginFormState extends State<LoginForm> {
   final TextEditingController _passwordController = TextEditingController();
 
   // Función para verificar si el usuario y la contraseña son válidos
-  bool _areCredentialsAuthorized(String user, String password) {
-    for (var credentials in DemoData.authorizedUsers) {
-      if (credentials['usuario'] == user &&
-          credentials['contraseña'] == password) {
-        return true; // Credenciales válidas
+  Future<bool> _areCredentialsAuthorized(String user, String password) async {
+    final response = await http.get(
+      Uri.parse('https://servidorwebcito.000webhostapp.com/alumnos.php'),
+    );
+
+    if (response.statusCode == 200) {
+      final List<dynamic> alumnosData = json.decode(response.body);
+
+      for (var alumno in alumnosData) {
+        if (alumno['usuario'] == user && alumno['contraseña'] == password) {
+          return true; // Credenciales válidas
+        }
       }
     }
+
     return false; // Credenciales no válidas
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -73,12 +86,12 @@ class _LoginFormState extends State<LoginForm> {
               ),
               SizedBox(height: 20.0),
               ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
                   String user = _userController.text;
                   String password = _passwordController.text;
 
                   // Verificar las credenciales
-                  if (_areCredentialsAuthorized(user, password)) {
+                  if (await _areCredentialsAuthorized(user, password)) {
                     // Credenciales válidas, permitir el acceso
                     Navigator.of(context).push(
                       MaterialPageRoute(
@@ -102,7 +115,8 @@ class _LoginFormState extends State<LoginForm> {
                   }
                 },
                 child: Text('Ingresar'),
-              ),
+              )
+
             ],
           ),
         ),
@@ -111,16 +125,3 @@ class _LoginFormState extends State<LoginForm> {
   }
 }
 
-class DemoData {
-  static final List<Map<String, String>> authorizedUsers = [
-    {
-      'usuario': 'dante.idrogo@unmsm.edu.pe',
-      'contraseña': 'contraseña',
-    },
-    {
-      'usuario': 'dajanna.moran@unmsm.edu.pe',
-      'contraseña': 'contraseña',
-    },
-    // Agrega más usuarios autorizados según sea necesario
-  ];
-}

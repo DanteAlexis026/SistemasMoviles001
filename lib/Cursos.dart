@@ -7,13 +7,15 @@ import 'CursoCiclo.dart';
 class Curso {
   final String nombre;
   final int id_curso;
+  final int id_ciclo;
 
-  Curso({required this.nombre, required this.id_curso});
+  Curso({required this.nombre, required this.id_curso, required this.id_ciclo});
 
   factory Curso.fromJson(Map<String, dynamic> json) {
     return Curso(
       nombre: json['nombre'],
       id_curso: json['id'],
+      id_ciclo: json['id_ciclo'], // Asignar el valor de id_ciclo desde los datos
     );
   }
 }
@@ -49,18 +51,18 @@ class _CursoListScreenState extends State<CursoListScreen> {
   }
 
   List<Curso> getCursosPrimerCiclo() {
-    return cursos.where((curso) => curso.id_curso >= 1 && curso.id_curso <= 7).toList();
+    return cursos.where((curso) => curso.id_ciclo == 1).toList();
   }
 
   List<Curso> getCursosSegundoCiclo() {
-    return cursos.where((curso) => curso.id_curso >= 8 && curso.id_curso <= 15).toList();
+    return cursos.where((curso) => curso.id_ciclo == 2).toList();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Lista de Cursos'),
+        title: Text('Cursos'),
       ),
       body: ListView(
         children: [

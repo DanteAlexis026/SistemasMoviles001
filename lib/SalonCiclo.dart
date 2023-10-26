@@ -16,14 +16,32 @@ class _SalonCicloState extends State<SalonCiclo> {
   List<Map<String, dynamic>> salonesData = [];
   Map<int, List<Map<String, dynamic>>> horariosData = {};
   Map<int, Map<String, dynamic>> docentesData = {};
+  late String nombreCurso = '';
 
   _SalonCicloState({required this.idCurso});
 
   @override
   void initState() {
     super.initState();
+    fetchNombreCurso();
     fetchData();
     fetchDocentes();
+  }
+
+  Future<void> fetchNombreCurso() async {
+    final response = await http.get(
+      Uri.parse('https://servidorwebcito.000webhostapp.com/cursos.php?id_curso=${widget.idCurso}'),
+    );
+
+    if (response.statusCode == 200) {
+      final jsonData = json.decode(response.body);
+
+      setState(() {
+        nombreCurso = jsonData[0]['nombre']; // Obtén el nombre del curso
+      });
+    } else {
+      throw Exception('Error al cargar el nombre del curso');
+    }
   }
 
   Future<void> fetchData() async {
@@ -86,29 +104,32 @@ class _SalonCicloState extends State<SalonCiclo> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Salones del Curso'),
-      ),
+        title: Text(
+        nombreCurso,
+        style: TextStyle(fontSize: 15), // Ajusta el tamaño de fuente según tu preferencia
+    )),
       body: Center(
         child: salonesData.isNotEmpty
             ? DataTable(
+          dataRowHeight: 40.0, // Altura de las filas
+          columnSpacing: 10.0, // Espacio entre columnas
           columns: <DataColumn>[
             DataColumn(label: Center(child: Text('Sección'))),
-            DataColumn(label: Center(child: Text('Código del Docente'))),
-            DataColumn(label: Text('Nombre del Docente')),
+            DataColumn(label: Text('Docente')),
             DataColumn(label: Center(child: Text('Aula')), numeric: true),
             DataColumn(label: Center(child: Text('Horarios')), numeric: true),
           ],
           rows: salonesData.map((salon) {
             final docenteData = docentesData[salon['id_docente']] ?? {
-              'codigo_docente': 'No encontrado',
               'docente': 'No encontrado',
             };
             final horariosDeSeccion = horariosData[salon['seccion']] ?? [];
 
             return DataRow(cells: [
               DataCell(Center(child: Text(salon['seccion'].toString()))),
-              DataCell(Text(docenteData['codigo_docente'])),
-              DataCell(Text(docenteData['docente'])),
+              DataCell(
+                Text(docenteData['docente'].replaceAll(', ', ',\n')),
+              ),
               DataCell(Center(child: Text(salon['aula']))),
               DataCell(
                 Center(
@@ -116,7 +137,7 @@ class _SalonCicloState extends State<SalonCiclo> {
                     onPressed: () {
                       showHorariosDialog(horariosDeSeccion);
                     },
-                    child: Text('Ver Horarios'),
+                    child: Text('Ver'),
                   ),
                 ),
               ),
@@ -135,18 +156,24 @@ class _SalonCicloState extends State<SalonCiclo> {
         return AlertDialog(
           title: Text('Horarios'),
           content: SingleChildScrollView(
-            child: Column(
-              children: horarios.map((horario) {
-                return Column(
-                  children: <Widget>[
-                    Text('ID de Horario: ${horario['id']}'),
-                    Text('Día: ${horario['dia']}'),
-                    Text('Hora de inicio: ${horario['hora_inicio']}'),
-                    Text('Hora de fin: ${horario['hora_fin']}'),
-                    Text('Tipo de clase: ${horario['tipo_clase']}'),
-                    Divider(),
-                  ],
-                );
+            child: DataTable(
+              dataRowHeight: 40.0, // Altura de las filas
+              columnSpacing: 10.0, // Espacio entre columnas
+              columns: [
+                DataColumn(label: Text('Día')),
+                DataColumn(label: Text('Horario')),
+                DataColumn(label: Text('Tipo de clase')),
+              ],
+              rows: horarios.map((horario) {
+                final horaInicio = horario['hora_inicio'];
+                final horaFin = horario['hora_fin'];
+                final horarioRango = '$horaInicio - $horaFin';
+
+                return DataRow(cells: [
+                  DataCell(Text('${horario['dia']}')),
+                  DataCell(Text(horarioRango)),
+                  DataCell(Text('${horario['tipo_clase']}')),
+                ]);
               }).toList(),
             ),
           ),
